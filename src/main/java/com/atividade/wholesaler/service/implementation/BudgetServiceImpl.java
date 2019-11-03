@@ -1,16 +1,28 @@
 package com.atividade.wholesaler.service.implementation;
 
 import com.atividade.wholesaler.domain.Budget;
+import com.atividade.wholesaler.domain.Order;
 import com.atividade.wholesaler.domain.OrderItem;
 import com.atividade.wholesaler.service.BudgetService;
+import com.atividade.wholesaler.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @Service
 public class BudgetServiceImpl implements BudgetService {
 
+    @Autowired
+    private OrderService orderService;
+
     private static List<Budget> budgetList;
+
+    private static final String ACCEPTANCE_PENDING = "Pendente";
+    private static final String ACCEPTANCE_ACCEPTED = "Aceito";
+    private static final String ACCEPTANCE_REJECTED = "Rejeitado";
 
     public BudgetServiceImpl() {
         budgetList = new ArrayList<>();
@@ -33,7 +45,7 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public Budget create(List<OrderItem> orderItemList) {
+    public Budget create(List<OrderItem> orderItemList, String orderId) {
         // Calculando valor do orçamento
         Double value = calculatePrice(orderItemList);
 
@@ -41,12 +53,30 @@ public class BudgetServiceImpl implements BudgetService {
         Date deliveryDate = calculateDeliveryDate(value);
 
         // Criando novo orçamento
-        Budget budget = new Budget(value, deliveryDate);
+        Budget budget = new Budget(orderId, value, deliveryDate, ACCEPTANCE_PENDING);
 
         // Adicionando à lista de orçamentos
         budgetList.add(budget);
 
         return budget;
+    }
+
+    @Override
+    public String updateAcceptance(String id, String acceptance) throws IOException, URISyntaxException {
+        Budget budget = getById(id);
+
+        if(acceptance.equals(ACCEPTANCE_REJECTED)){
+            budget.setAcceptance(acceptance);
+            return "Your purchase order was closed.";
+        }
+        else if(acceptance.equals(ACCEPTANCE_ACCEPTED)){
+            budget.setAcceptance(acceptance);
+            orderService.updateStatus(budget.getOrderId(), orderService.getStatus(2));
+            return "Your purchase order was confirmed! The products you have requested are being produced and will be delivered in the due date.";
+        }
+        else {
+            return "Invalid acceptance value.";
+        }
     }
 
     private Double calculatePrice(List<OrderItem> orderItemList) {

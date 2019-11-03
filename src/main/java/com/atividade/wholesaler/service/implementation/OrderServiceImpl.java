@@ -7,11 +7,14 @@ import com.atividade.wholesaler.domain.Product;
 import com.atividade.wholesaler.service.BudgetService;
 import com.atividade.wholesaler.service.OrderService;
 import com.atividade.wholesaler.service.ProductService;
+import com.atividade.wholesaler.util.Retailer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -45,11 +48,12 @@ public class OrderServiceImpl implements OrderService {
         this.orderList.add(order);
 
         // Criando orçamento baseado no pedido já criado
-        Budget budget = budgetService.create(orderItemList);
+        Budget budget = budgetService.create(orderItemList, order.getId());
 
         JSONObject response = new JSONObject();
         response.put("orderId", order.getId());
         response.put("orderStatus", order.getStatus());
+        response.put("budgetId", budget.getId());
         response.put("budgetValue", budget.getValue());
         response.put("deliveryDate", budget.getDeliveryDate());
 
@@ -71,6 +75,29 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return order;
+    }
+
+    @Override
+    public String getStatus(Integer type){
+        switch (type){
+            case 1:
+                return STATUS_PENDING;
+            case 2:
+                return STATUS_PRODUCING;
+            case 3:
+                return STATUS_PRODUCED;
+            case 4:
+                return STATUS_SENT;
+            default:
+                return "ERROR";
+        }
+    }
+
+    @Override
+    public void updateStatus(String id, String status) throws IOException, URISyntaxException {
+        Order order = getById(id);
+        order.setStatus(status);
+        Retailer.putOrder(status);
     }
 
     private List<OrderItem> processRetailerApiData(String data) {
