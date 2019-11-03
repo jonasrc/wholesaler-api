@@ -97,7 +97,10 @@ public class OrderServiceImpl implements OrderService {
     public void updateStatus(String id, String status) throws IOException, URISyntaxException {
         Order order = getById(id);
         order.setStatus(status);
-        Retailer.putOrder(status);
+        JSONObject retailerPostbackData = new JSONObject();
+        retailerPostbackData.put("orderId", id);
+        retailerPostbackData.put("orderStatus", status);
+        Retailer.putOrder(retailerPostbackData.toString());
     }
 
     private List<OrderItem> processRetailerApiData(String data) {

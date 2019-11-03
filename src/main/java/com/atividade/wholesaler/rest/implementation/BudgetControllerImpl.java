@@ -1,11 +1,11 @@
 package com.atividade.wholesaler.rest.implementation;
 
-import com.atividade.wholesaler.domain.Budget;
-import com.atividade.wholesaler.domain.Order;
 import com.atividade.wholesaler.rest.BudgetController;
 import com.atividade.wholesaler.service.BudgetService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +20,10 @@ public class BudgetControllerImpl implements BudgetController {
     private BudgetService budgetService;
 
     @Override
-    public ResponseEntity<String> putBudgetAcceptance(String budgetId, String acceptance) throws IOException, URISyntaxException {
-        String response = budgetService.updateAcceptance(budgetId, acceptance);
+    @PutMapping("/budget")
+    public ResponseEntity<String> putBudgetAcceptance(String data) throws IOException, URISyntaxException {
+        JSONObject jsonData = new JSONObject(data);
+        String response = budgetService.updateAcceptance(jsonData.getString("budgetId"), jsonData.getString("acceptance"));
         return ResponseEntity.ok().body(response);
     }
 }

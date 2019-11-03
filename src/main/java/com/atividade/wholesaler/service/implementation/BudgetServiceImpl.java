@@ -65,11 +65,11 @@ public class BudgetServiceImpl implements BudgetService {
     public String updateAcceptance(String id, String acceptance) throws IOException, URISyntaxException {
         Budget budget = getById(id);
 
-        if(acceptance.equals(ACCEPTANCE_REJECTED)){
+        if(acceptance.equals("rejected")){
             budget.setAcceptance(acceptance);
             return "Your purchase order was closed.";
         }
-        else if(acceptance.equals(ACCEPTANCE_ACCEPTED)){
+        else if(acceptance.equals("accepted")){
             budget.setAcceptance(acceptance);
             orderService.updateStatus(budget.getOrderId(), orderService.getStatus(2));
             return "Your purchase order was confirmed! The products you have requested are being produced and will be delivered in the due date.";
