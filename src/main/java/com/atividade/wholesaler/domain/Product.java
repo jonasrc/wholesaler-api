@@ -7,11 +7,11 @@ public class Product {
 
     private String name;
 
-    private Integer code;
+    private Long code;
 
     private Double value;
 
-    public Product(String name, Integer code, Double value) {
+    public Product(String name, Long code, Double value) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.code = code;
@@ -34,11 +34,11 @@ public class Product {
         this.name = name;
     }
 
-    public Integer getCode() {
+    public Long getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(Long code) {
         this.code = code;
     }
 

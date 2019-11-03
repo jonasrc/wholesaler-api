@@ -10,15 +10,15 @@ public class Order {
 
     private String status;
 
-    private List<Product> productList;
+    private List<OrderItem> orderItemList;
 
     private Date creationDate;
 
-    public Order(String status, List<Product> productList) {
+    public Order(String status, List<OrderItem> orderItemList) {
         this.id = UUID.randomUUID().toString();
         this.status = status;
-        this.productList = new ArrayList<>();
-        this.productList = productList;
+        this.orderItemList = new ArrayList<>();
+        this.orderItemList = orderItemList;
         this.creationDate = new Date(System.currentTimeMillis());
     }
 
@@ -38,12 +38,12 @@ public class Order {
         this.status = status;
     }
 
-    public List<Product> getProductList() {
-        return productList;
+    public List<OrderItem> getOrderItemList() {
+        return orderItemList;
     }
 
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
+    public void setProductList(List<OrderItem> orderItemList) {
+        this.orderItemList = orderItemList;
     }
 
     public Date getCreationDate() {
